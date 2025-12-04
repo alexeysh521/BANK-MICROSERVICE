@@ -1,0 +1,11 @@
+create table transactions(
+    transfer_id UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL UNIQUE,
+    user_id UUID NOT NULL,
+    from_acc_id UUID,
+    to_acc_id UUID,
+    amount DECIMAL(9, 2) NOT NULL,
+    currency VARCHAR(5) NOT NULL,
+    transactionType VARCHAR NOT NULL,
+    transactionStatus VARCHAR NOT NULL,
+    date TIMESTAMP NOT NULL
+);

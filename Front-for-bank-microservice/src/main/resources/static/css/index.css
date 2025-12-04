@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.left-section{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bank-info {
+    font-family: Arial, sans-serif; 
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.bank-logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain; /* сохраняет пропорции */
+    flex-shrink: 0;      /* не сжимается при нехватке места */
+}
+
+header {
+    display: flex; /* Включает Flexbox - механизм гибкой вёрстки */
+    align-items: center; /* Выравнивает элементы по вертикали по центру */
+    padding: 30px 20px; /* Внутренние отступы внутри header */
+    gap: 60px; /* расстояние между элементами */
+    background-color: red; /* Красный фон шапки */
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-link {
+    font-family: Arial, sans-serif; /* шрифт */
+    font-weight: 400; /* Regular */
+    font-size: 25px; /* размер текста */
+    text-decoration: none;
+    color: white;
+}
+
+.nav-link.active {
+    color: white;
+}
+
+.user-info {
+    font-family: Arial, sans-serif; 
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    line-height: 1.4;
+}
+
+.client-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain; /* сохраняет пропорции */
+    flex-shrink: 0;      /* не сжимается при нехватке места */
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto; /* ← это прижмёт к правому краю */
+}
+
+
+
+

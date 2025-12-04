@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+
+    <header>
+      <div class="left-section">
+        <img src="/image/bank-logo.png" class="bank-logo"/>
+        <div class="bank-info">
+          <span>ШАПКА<br>БАНК</span>
+        </div>
+      </div>
+      
+      <nav>
+        <ul>
+          <li><a href="#main" class="nav-link">Главная</a></li>
+          <li><a href="#payments" class="nav-link">Платежи и переводы</a></li>
+          <li><a href="#history" class="nav-link">История</a></li>
+        </ul>
+      </nav>
+
+      <div class="right-section">
+        <div class="user-info">
+          <span>Алексей Шапкин<br>Client</span>
+        </div>
+
+        <img src="/image/client-logo.png" class="client-logo"/>
+      </div>
+      
+    </header>
+
+    <main id="content">
+      
+    </main>
+
+    <script>
+      async function loadContent(pageId) {
+        try{
+          const response = await fetch(`/${pageId}`);
+          const html = await response.text();
+          document.getElementById('content').innerHTML = html;
+        }catch{
+          document.getElementById('content').innerHTML = '<p>Страница не найдена</p>';
+        }
+
+      }
+      // Обработчик кликов по меню
+      document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.addEventListener('click', function(e){
+            e.preventDefault();
+            const pageId = this.getAttribute('href').substring(1);
+            loadContent(pageId);
+            history.pushState({page: pageId}, '', `#${pageId}`)
+          });
+        });
+
+        // Загрузка начальной страницы
+        const initialPage = window.location.hash.substring(1) || 'main';
+        loadContent(initialPage);
+      });
+
+      // Обработка кнопок назад/вперед
+      window.addEventListener('popstate', function(e) {
+          const pageId = e.state?.page || 'main';
+          loadContent(pageId);
+      });
+
+    </script>
+</body>
+</html>

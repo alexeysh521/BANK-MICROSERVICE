@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+    kafka_bank_1:
+      image: bitnami/kafka:latest
+      ports:
+       - "9092:9092"
+      environment:
+         - KAFKA_CFG_NODE_ID=1
+         - KAFKA_KRAFT_CLUSTER_ID=Eis93TCyQLSGLY59tCZuyg
+         - KAFKA_CFG_PROCESS_ROLES=controller,broker
+         - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka_bank_1:9091,2@kafka_bank_2:9091,3@kafka_bank_3:9091
+         - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
+         - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_bank_1:9090,EXTERNAL://${HOSTNAME:-localhost}:9092
+         - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+         - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+         - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+         - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      volumes:
+        - C:/kafka/temp/docker-compose/volumes/server_bank_1/:/bitnami/kafka
+
+    kafka_bank_2:
+      image: bitnami/kafka:latest
+      ports:
+        - "9094:9094"
+      environment:
+        - KAFKA_CFG_NODE_ID=2
+        - KAFKA_KRAFT_CLUSTER_ID=Eis93TCyQLSGLY59tCZuyg
+        - KAFKA_CFG_PROCESS_ROLES=controller,broker
+        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka_bank_1:9091,2@kafka_bank_2:9091,3@kafka_bank_3:9091
+        - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9094
+        - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_bank_2:9090,EXTERNAL://${HOSTNAME:-localhost}:9094
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      volumes:
+        - C:/kafka/temp/docker-compose/volumes/server_bank_2/:/bitnami/kafka
+
+    kafka_bank_3:
+      image: bitnami/kafka:latest
+      ports:
+        - "9096:9096"
+      environment:
+        - KAFKA_CFG_NODE_ID=3
+        - KAFKA_KRAFT_CLUSTER_ID=Eis93TCyQLSGLY59tCZuyg
+        - KAFKA_CFG_PROCESS_ROLES=controller,broker
+        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka_bank_1:9091,2@kafka_bank_2:9091,3@kafka_bank_3:9091
+        - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9096
+        - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_bank_3:9090,EXTERNAL://${HOSTNAME:-localhost}:9096
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+        - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      volumes:
+        - C:/kafka/temp/docker-compose/volumes/server_bank_3/:/bitnami/kafka

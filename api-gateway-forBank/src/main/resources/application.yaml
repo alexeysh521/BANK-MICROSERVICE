@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: account-service
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/gateway/account/**
+          filters:
+            - RewritePath=/gateway/account/(?<remaining>.*), /account/${remaining}
+
+        - id: transfer-service
+          uri: lb://TRANSFER-SERVICE
+          predicates:
+            - Path=/transfer/**
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+    globalcors:
+      cors-configurations:
+        '[/**]':
+          allowed-origins: "http://localhost:3000"
+          allowed-methods: "*"
+          allowed-headers: "*"
+          allow-credentials: true
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

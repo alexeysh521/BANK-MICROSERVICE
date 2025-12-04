@@ -1,0 +1,106 @@
+details {
+    width: 500px; /* ширина по содержимому */
+    padding: 40px 30px; /* Внутренние отступы внутри header */
+    position: relative; /* чтобы псевдоэлементы позиционировались относительно details */
+    min-height: 300px; /* или нужная высота */
+}
+
+details::before {
+    content: "";
+    border-left: 5px solid #d3d3d3;
+    height: 100%; /* займет всю высоту */
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+details::after {
+    content: "";
+    border-right: 5px solid #d3d3d3;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+summary{
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    color: #686868;
+    margin-bottom: 15px;
+}
+
+.total-money{
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 25px;
+    color: #9e9e9e;
+}
+
+.amount-money {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    color: black;
+}
+
+.money-block {
+    display: flex;
+    flex-direction: column; /* вертикальное расположение */
+}
+
+.circle{
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #9e9e9e; 
+    margin-right: 8px; /* отступ от текста */
+}
+
+.accounts-and-cards{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline; /* ← ВЫРАВНИВАНИЕ ПО ТЕКСТУ */
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    color: black;
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-name{
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: #9e9e9e;
+}
+
+.card-number{
+    align-self: flex-start; /* прижимает к верху */
+    margin-top: 0.4em; /* тонкая корректировка */
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 17px;
+    color: #9e9e9e;
+}
+
+.card-logo{
+    width: 60px;
+    height: 60px;
+    object-fit: contain; /* сохраняет пропорции */
+    flex-shrink: 0;      /* не сжимается при нехватке места */
+}
+

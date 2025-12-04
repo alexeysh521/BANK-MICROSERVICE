@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/AccountService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/AuthService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/EmailNotificationSerice" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Front-for-bank-microservice" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/PeopleService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TransferService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/api-gateway-forBank" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/eureka" vcs="Git" />
+  </component>
+</project>

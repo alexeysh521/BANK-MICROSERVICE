@@ -1,0 +1,8 @@
+CREATE TABLE Accounts(
+    account_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    balance DECIMAL(20, 2) DEFAULT 0.00,
+    currency VARCHAR(5) NOT NULL,
+    status VARCHAR NOT NULL,
+    registration_date TIMESTAMP NOT NULL
+);

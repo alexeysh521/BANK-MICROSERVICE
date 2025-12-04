@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+<body>
+    <!-- Основной блок регистрации -->
+    <div class="register-block">
+        <!-- Заголовок формы -->
+        <h1 class="register-title">Добро пожаловать в<br>ШАПКА БАНК</h1>
+        
+        <!-- Форма регистрации -->
+        <form id="registerForm" method="post">
+            
+            <!-- Группа поля логина -->
+            <div class="form-group">
+                <label for="username">Придумайте логин:</label>
+                <input id="username" name="username" type="text" required
+                    placeholder="Ваш уникальный логин">
+            </div>
+            
+            <!-- Группа поля email -->
+            <div class="form-group">
+                <label for="email">Введите email:</label>
+                <input id="email" name="email" type="email" required 
+                    placeholder="example@mail.com">
+            </div>
+
+            <!-- Группа поля пароля -->
+            <div class="form-group">
+                <label for="password">Придумайте пароль:</label>
+                <input id="password" name="password" type="password" required 
+                    placeholder="Не менее 6 символов" minlength="6">
+                <div class="form-hint">Пароль должен содержать не менее 6 символов</div>
+            </div>
+
+            <!-- Группа поля подтверждения пароля -->
+            <div class="form-group">
+                <input id="repeat" name="repeat" type="password" required 
+                    placeholder="Повторите пароль">
+                <div class="form-hint">Пароли должны совпадать</div>
+            </div>
+
+            <!-- Блок согласия на обработку данных -->
+            <div class="checkbox-group">
+                <input id="agree" name="agree" type="checkbox" required>
+                <label for="agree">Я согласен на обработку персональных данных</label>
+            </div>
+
+            <!-- Кнопка отправки формы -->
+            <button type="submit" class="submit-btn">Зарегистрироваться</button>
+        </form>
+    </div>
+
+<script>
+    const form = document.getElementById('registerForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // отменяем стандартную отправку формы
+
+        const password = form['password'].value;
+        const repeat = form['repeat'].value;
+
+        if (password !== repeat) {
+            alert('Пароли не совпадают!');
+            return;
+        }
+
+        const data = {
+            username: form['username'].value,
+            password: form['password'].value,
+            email: form['email'].value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/auth/register/user', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('Регистрация прошла успешно!');
+                console.log(result);
+                window.location.href = '/'; // Перенаправляем на логин
+            } else {
+                const error = await response.text();
+                alert('Ошибка регистрации: ' + error);
+                console.error(error);
+            }
+        } catch (err) {
+            alert('Сетевая ошибка: ' + err);
+            console.error(err);
+        }
+    });
+</script>
+</body>
+</html>

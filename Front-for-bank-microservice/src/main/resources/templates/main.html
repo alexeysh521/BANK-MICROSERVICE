@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<details>
+  <summary>
+    Доступные средства
+  </summary>
+
+  <div class="amount-money">
+    <span class="circle"></span>
+    <div class="money-block">
+        <div class="total-money">Всего</div>
+        <div class="sum">2164,25 ₽</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>
+    Счета и карты
+  </summary>
+
+  <div class="accounts-and-cards">
+    <div class="card-left">
+      <img src="/image/mir-card-logo.png" class="card-logo"/>
+      <div class="card-block">
+        <div class="card-name">МИР счет в рублях</div>
+        <div class="card-sum">2164,25 ₽</div>
+    </div>
+    </div>
+    <div class="card-number">● 4834</div>
+  </div>
+</details>
+
+</body>
+</html>
