@@ -12,10 +12,10 @@
         <module name="TransferService" />
         <module name="eureka" />
         <module name="AuthService" />
+        <module name="EmailNotificationService" />
         <module name="Front-for-bank-microservice" />
         <module name="AccountService" />
         <module name="api-gateway-forBank" />
-        <module name="EmailNotificationSerice" />
       </profile>
     </annotationProcessing>
   </component>
@@ -23,7 +23,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AccountService" options="-parameters" />
       <module name="AuthService" options="-parameters" />
-      <module name="EmailNotificationSerice" options="-parameters" />
+      <module name="EmailNotificationService" options="-parameters" />
       <module name="Front-for-bank-microservice" options="-parameters" />
       <module name="PeopleService" options="-parameters" />
       <module name="TransferService" options="-parameters" />

@@ -4,7 +4,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/AccountService" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/AuthService" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/EmailNotificationSerice" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Front-for-bank-microservice" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/PeopleService" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/TransferService" vcs="Git" />
