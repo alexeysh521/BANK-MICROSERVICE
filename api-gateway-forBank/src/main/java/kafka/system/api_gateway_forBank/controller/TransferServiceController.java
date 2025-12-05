@@ -2,12 +2,11 @@ package kafka.system.api_gateway_forBank.controller;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import kafka.system.core.dto.TransferService.*;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -17,12 +16,15 @@ public class TransferServiceController {
 
     private final WebClient.Builder webClientBuilder;
 
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     public TransferServiceController(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
     @PostMapping("/deposit")
     public Mono<String> deposit(@RequestBody DepositRequest request) {
+        LOGGER.info("deposit request: " + request);
         return webClientBuilder.build()
                 .post()
                 .uri("lb://TRANSFER-SERVICE/transfer/deposit")

@@ -7,6 +7,10 @@ spring:
 
   cloud:
     gateway:
+      httpclient:
+        default-headers:
+          X-User-Id: true
+          X-User-Role: true
       routes:
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
@@ -19,6 +23,8 @@ spring:
           uri: lb://TRANSFER-SERVICE
           predicates:
             - Path=/transfer/**
+          filters:
+
 
         - id: auth-service
           uri: lb://AUTH-SERVICE

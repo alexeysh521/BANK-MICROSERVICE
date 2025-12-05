@@ -24,7 +24,7 @@ public class TransferController {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @PostMapping("/deposit")
-    public ResponseEntity<?> deposit(@RequestHeader(value = "X-Test", required = false) String userId,
+    public ResponseEntity<?> deposit(@RequestHeader(value = "X-User-Id", required = false) String userId,
                                      @RequestBody DepositRequest depositRequest) {
         LOGGER.info("❌{}", userId);
         transferService.operation(depositRequest);
