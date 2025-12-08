@@ -12,12 +12,14 @@
         <module name="TransferService" />
         <module name="eureka" />
         <module name="AuthService" />
-        <module name="EmailNotificationService" />
         <module name="Front-for-bank-microservice" />
         <module name="AccountService" />
         <module name="api-gateway-forBank" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="EmailNotificationService" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
