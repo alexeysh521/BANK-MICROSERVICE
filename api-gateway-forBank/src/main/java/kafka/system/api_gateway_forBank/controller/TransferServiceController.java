@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 public class TransferServiceController {
 
     private final WebClient.Builder webClientBuilder;
-
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public TransferServiceController(WebClient.Builder webClientBuilder) {

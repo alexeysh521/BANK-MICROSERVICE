@@ -17,27 +17,19 @@ public class ApiConfig {
         return WebClient.builder();
     }
 
-    private final JwtAuthFilter jwtAuthFilter;
-
-    public ApiConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
-
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route("auth-service", r -> r
-                        .path("/auth/**")
-                        .filters(f -> f.stripPrefix(1))
-                        .uri("lb://AUTH-SERVICE"))
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
+                                           JwtAuthFilter jwtAuthFilter) {
+        System.out.println("🔥 Building transfer-service route with JwtAuthFilter");
 
+        return builder.routes()
                 .route("transfer-service", r -> r
                         .path("/transfer/**")
-                        .filters(f -> f
-                                .filter(jwtAuthFilter)
-                                .stripPrefix(1))
+                        .filters(f -> {
+                            System.out.println("✅ Adding JwtAuthFilter to /transfer/**");
+                            return f.filter(jwtAuthFilter.apply(new JwtAuthFilter.Config()));
+                        })
                         .uri("lb://TRANSFER-SERVICE"))
                 .build();
     }
-
 }

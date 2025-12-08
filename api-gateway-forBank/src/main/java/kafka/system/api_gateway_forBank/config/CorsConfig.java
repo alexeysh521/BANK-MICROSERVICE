@@ -20,6 +20,7 @@ public class CorsConfig {
         config.addExposedHeader("X-User-Id");
         config.addExposedHeader("X-User-Role");
         config.addExposedHeader("Authorization");
+        config.addExposedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

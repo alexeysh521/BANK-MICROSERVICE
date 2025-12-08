@@ -7,10 +7,6 @@ spring:
 
   cloud:
     gateway:
-      httpclient:
-        default-headers:
-          X-User-Id: true
-          X-User-Role: true
       routes:
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
@@ -19,12 +15,12 @@ spring:
           filters:
             - RewritePath=/gateway/account/(?<remaining>.*), /account/${remaining}
 
-        - id: transfer-service
-          uri: lb://TRANSFER-SERVICE
-          predicates:
-            - Path=/transfer/**
-          filters:
-
+#        - id: transfer-service
+#          uri: lb://TRANSFER-SERVICE
+#          predicates:
+#            - Path=/transfer/**
+#          filters:
+#            - JwtAuthFilter
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
@@ -48,3 +44,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
+
+logging:
+  level:
+    root: INFO
+    kafka.system.api_gateway_forBank: DEBUG
+    org.springframework.cloud.gateway: DEBUG
