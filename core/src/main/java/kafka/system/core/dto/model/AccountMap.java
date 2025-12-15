@@ -20,5 +20,5 @@ public class AccountMap {
 
     private AccountStatusType status = AccountStatusType.PENDING_VERIFICATION;
 
-    private LocalDateTime registrationDate;
+    private LocalDateTime timestamp;
 }

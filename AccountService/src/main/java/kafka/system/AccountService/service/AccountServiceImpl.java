@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import kafka.system.AccountService.persistence.model.Account;
 import kafka.system.AccountService.persistence.repository.AccountRepository;
 import kafka.system.AccountService.service.impl.AccountService;
+import kafka.system.core.dto.AccountService.AccountBalanceDto;
+import kafka.system.core.dto.AccountService.CreateAcc;
 import kafka.system.core.dto.AccountService.TranConfirmed;
 import kafka.system.core.dto.AccountService.TranFailure;
 import kafka.system.core.dto.TransferService.*;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,7 +40,25 @@ public class AccountServiceImpl implements AccountService {
     @Value("${transfer-failure-topic}")
     private String failureTran;
 
-    public void createAccount(UUID userId) {
+    public List<AccountMap> findAllByUserId(UUID userId) {
+
+        return accountRepository.findAccountByUserId(userId)
+                .stream()
+                .map(this::toConvert)
+                .toList();
+    }
+
+    public void createAccount(CreateAcc createAcc){
+        Account account = new Account(
+                createAcc.getUserId(),
+                createAcc.getBalance(),
+                createAcc.getCurrency()
+        );
+
+        accountRepository.save(account);
+    }
+
+    public void createDefaultAccount(UUID userId) {
         Account account = new Account(
                 userId
         );
@@ -50,6 +71,10 @@ public class AccountServiceImpl implements AccountService {
                 .map(this::toConvert)
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    }
+
+    public AccountBalanceDto viewBalance(UUID accId){
+        return accountRepository.viewAccBalance(accId);
     }
 
     @Override

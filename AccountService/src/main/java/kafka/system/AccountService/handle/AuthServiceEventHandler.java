@@ -1,7 +1,6 @@
 package kafka.system.AccountService.handle;
 
 import kafka.system.AccountService.service.AccountServiceImpl;
-import kafka.system.core.dto.AccountService.CreateDefaultAcc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -24,7 +23,7 @@ public class AuthServiceEventHandler {
 
     @KafkaHandler
     public void createDefaultAccount(UUID userId) {
-        accountService.createAccount(userId);
+        accountService.createDefaultAccount(userId);
         LOGGER.info("Create default account for id={}", userId);
     }
 }
