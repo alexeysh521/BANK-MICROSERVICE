@@ -2,6 +2,7 @@ package kafka.system.PeopleService.controller;
 
 import kafka.system.PeopleService.service.UserServiceImpl;
 import kafka.system.core.dto.PeopleService.AddUserDataDto;
+import kafka.system.core.dto.PeopleService.ViewDataUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class UserController {
 
     /// просмотр даных пользователя
     @GetMapping("/view/data/{userId}")
-    public ResponseEntity<?> viewData(@PathVariable UUID userId){
+    public ResponseEntity<ViewDataUser> viewData(@PathVariable UUID userId){
         return ResponseEntity.ok(userService.viewData(userId));
     }
 

@@ -22,6 +22,11 @@ spring:
           filters:
             - JwtAuthFilter
 
+        - id: people-service
+          uri: lb://PEOPLE-SERVICE
+          predicates:
+            - Path=/**
+
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:

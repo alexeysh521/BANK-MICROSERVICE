@@ -18,22 +18,4 @@ public class ManagerController {
         this.managerService = managerService;
     }
 
-//    @PostMapping("/register9570427e9-257ba")
-//    public ResponseEntity<String> register(@RequestBody ManagerRegister dto){
-//        managerService.register(dto);
-//        return ResponseEntity.ok("Register successful");
-//    }
-
-    /// вход
-
-    /// отправляется сообщение на emailNotificationService с kafka
-
-    /// ввести личные данные
-
-    /// изменить личные данные
-
-    /// сменить логин
-
-    /// сменить пароль
-
 }
