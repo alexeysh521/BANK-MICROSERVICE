@@ -10,6 +10,7 @@ import kafka.system.core.dto.AccountService.TranConfirmed;
 import kafka.system.core.dto.AccountService.TranFailure;
 import kafka.system.core.dto.TransferService.*;
 import kafka.system.core.dto.model.AccountMap;
+import kafka.system.core.enums.AccountStatusType;
 import kafka.system.core.enums.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -42,19 +43,29 @@ public class AccountServiceImpl implements AccountService {
 
     public List<AccountMap> findAllByUserId(UUID userId) {
 
-        return accountRepository.findAccountByUserId(userId)
+        return accountRepository.findAccountsByUserId(userId)
                 .stream()
                 .map(this::toConvert)
                 .toList();
     }
 
     public void createAccount(CreateAcc createAcc){
+        Account existingAcc = accountRepository.findAccountsByUserId(createAcc.getUserId())
+                .stream()
+                .filter(acc -> acc.getStatus() == AccountStatusType.ACTIVE || acc.getStatus() == AccountStatusType.PREMIUM)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        if(existingAcc.getStatus() == AccountStatusType.PENDING_VERIFICATION || existingAcc.getStatus() == AccountStatusType.BLOCKED)
+            throw new IllegalArgumentException("Account always pending or blocked status type");
+
         Account account = new Account(
                 createAcc.getUserId(),
                 createAcc.getBalance(),
                 createAcc.getCurrency()
         );
 
+        account.setStatus(AccountStatusType.ACTIVE);
         accountRepository.save(account);
     }
 

@@ -26,7 +26,6 @@ import java.util.Map;
 public class ConsumerKafkaConfig {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
     private final Environment env;
 
     public ConsumerKafkaConfig(Environment environment) {
@@ -35,45 +34,43 @@ public class ConsumerKafkaConfig {
 
     @Bean
     ConsumerFactory<String, Object> consumerFactory(){
-        Map<String, Object> c = new HashMap<>();
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                env.getProperty("spring.kafka.consumer.bootstrap-servers"));
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("spring.kafka.consumer.group-id"));
+        config.put(JsonDeserializer.TRUSTED_PACKAGES,
+                env.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
+        config.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, env.getProperty(
+                "spring.kafka.consumer.isolation-level", "READ_COMMITTED").toLowerCase());
 
-        c.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.consumer.bootstrap-servers"));
-        c.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        c.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        c.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        c.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("spring.kafka.consumer.group-id"));
-        c.put(JsonDeserializer.TRUSTED_PACKAGES, env.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
-        c.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, env.getProperty("spring.kafka.consumer.isolation-level",
-                "READ_COMMITTED").toLowerCase());
-
-        c.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        c.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        return new DefaultKafkaConsumerFactory<>(c);
+        return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-            ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate){
+            ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate) {
 
-        ConcurrentKafkaListenerContainerFactory<String, Object> containerFactory = new ConcurrentKafkaListenerContainerFactory<>();
-
+        ConcurrentKafkaListenerContainerFactory<String, Object> containerFactory =
+                new ConcurrentKafkaListenerContainerFactory<>();
         containerFactory.setConsumerFactory(consumerFactory);
 
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(
-            new DeadLetterPublishingRecoverer(kafkaTemplate),
-            new FixedBackOff(2000, 5)
+        DefaultErrorHandler handler = new DefaultErrorHandler(
+                new DeadLetterPublishingRecoverer(kafkaTemplate),
+                new FixedBackOff(2000, 5)
         );
 
-        errorHandler.setRetryListeners((record, ex, deliveryAttempt) -> {
+        handler.setRetryListeners((record, ex, deliveryAttempt) -> {
             LOGGER.error("ERROR processing record - Topic: {}, Partition: {}, Offset: {}, DeliveryAttempt: {}",
                     record.topic(), record.partition(), record.offset(), deliveryAttempt, ex);
         });
 
-        errorHandler.addNotRetryableExceptions(NotRetryableException.class);
-        errorHandler.addRetryableExceptions(RetryableException.class);
+        handler.addNotRetryableExceptions(NotRetryableException.class);
+        handler.addRetryableExceptions(RetryableException.class);
 
-        containerFactory.setCommonErrorHandler(errorHandler);
+        containerFactory.setCommonErrorHandler(handler);
 
         return containerFactory;
     }

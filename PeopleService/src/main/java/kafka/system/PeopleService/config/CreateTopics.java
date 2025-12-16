@@ -17,6 +17,15 @@ public class CreateTopics {
                 .build();
     }
 
+    @Bean
+    NewTopic createAccountStatusChangedTopic(){
+        return TopicBuilder
+                .name("account-status-changed-topic")
+                .partitions(1)
+                .replicas(1)
+                .build();
+
+    }
 
 
 }

@@ -7,9 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +16,9 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     Optional<Account> findByUserId(UUID userId);
 
-    List<Account> findAccountByUserId(UUID userId);
+    Optional<Account> findAccountByUserId(UUID userId);
+
+    List<Account> findAccountsByUserId(UUID userId);
 
     @Query("select new kafka.system.core.dto.AccountService.AccountBalanceDto(a.balance, a.currency)" +
             "from Account a where a.accountId = :accId")
