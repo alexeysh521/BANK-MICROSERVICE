@@ -2,8 +2,9 @@ package kafka.system.AuthService.service;
 
 import kafka.system.AuthService.persistence.model.AdminCredential;
 import kafka.system.AuthService.persistence.repository.AdminRepository;
-import kafka.system.AuthService.security.JwtProvider;
+import kafka.system.AuthService.security.JwtService;
 import kafka.system.core.dto.AuthService.AdminCredentialDto;
+import kafka.system.core.dto.AuthService.AdminLoginRequest;
 import kafka.system.core.dto.AuthService.AdminRegisterRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -17,19 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
 @Service
-public class AdminService {
+public class AdminServiceImpl {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtProvider;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ModelMapper modelMapper;
 
     @Value("${create-admin-events-topic}")
     private String adminCreateTopic;
 
-    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
+    public AdminServiceImpl(AdminRepository adminRepository, PasswordEncoder passwordEncoder, JwtService jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
@@ -37,7 +38,14 @@ public class AdminService {
         this.modelMapper = modelMapper;
     }
 
-    public Map<String, String> login(AdminRegisterRequest request) {
+    public boolean checkPassword(String email, String password) {
+        AdminCredential admin = adminRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("invalid credentials"));
+
+        return passwordEncoder.matches(password, admin.getPassword());
+    }
+
+    public Map<String, String> login(AdminLoginRequest request) {
         AdminCredential admin = adminRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("invalid credentials"));
         if (!passwordEncoder.matches(request.getPassword(), admin.getPassword()))

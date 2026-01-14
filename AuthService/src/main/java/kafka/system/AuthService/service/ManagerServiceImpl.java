@@ -2,8 +2,9 @@ package kafka.system.AuthService.service;
 
 import kafka.system.AuthService.persistence.model.ManagerCredential;
 import kafka.system.AuthService.persistence.repository.ManagerRepository;
-import kafka.system.AuthService.security.JwtProvider;
+import kafka.system.AuthService.security.JwtService;
 import kafka.system.core.dto.AuthService.ManagerCredentialDto;
+import kafka.system.core.dto.AuthService.ManagerLoginRequest;
 import kafka.system.core.dto.AuthService.ManagerRegisterRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -17,19 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
 @Service
-public class ManagerService {
+public class ManagerServiceImpl {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtProvider;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ModelMapper modelMapper;
 
     @Value("${create-manager-events-topic}")
     private String managerCreateTopic;
 
-    public ManagerService(ManagerRepository managerRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
+    public ManagerServiceImpl(ManagerRepository managerRepository, PasswordEncoder passwordEncoder, JwtService jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
         this.managerRepository = managerRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
@@ -37,7 +38,7 @@ public class ManagerService {
         this.modelMapper = modelMapper;
     }
 
-    public Map<String, String> login(ManagerRegisterRequest request) {
+    public Map<String, String> login(ManagerLoginRequest request) {
         ManagerCredential manager = managerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("invalid credentials"));
         if (!passwordEncoder.matches(request.getPassword(), manager.getPassword()))

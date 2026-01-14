@@ -6,26 +6,25 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
-@Configuration
+//@Configuration
 public class CorsConfig {
 
-    @Bean
-    public CorsWebFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-
-        config.addExposedHeader("X-User-Id");
-        config.addExposedHeader("X-User-Role");
-        config.addExposedHeader("Authorization");
-        config.addExposedHeader("*");
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new CorsWebFilter(source);
-    }
+//    @Bean
+//    public CorsWebFilter corsFilter() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.addAllowedOrigin("http://localhost:3000");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        config.addExposedHeader("X-User-Id");
+//        config.addExposedHeader("X-User-Role");
+//        config.addExposedHeader("Authorization");
+//        config.addExposedHeader("*");
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return new CorsWebFilter(source);
+//    }
 
 }

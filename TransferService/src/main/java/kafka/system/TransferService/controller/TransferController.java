@@ -2,6 +2,7 @@ package kafka.system.TransferService.controller;
 
 import kafka.system.TransferService.persistence.repository.TransferRepository;
 import kafka.system.TransferService.service.TransferServiceImpl;
+import kafka.system.core.dto.AccountService.UuidIdRequest;
 import kafka.system.core.dto.TransferService.*;
 import kafka.system.core.enums.TransactionStatusType;
 import kafka.system.core.exception.TransfersServiceException;
@@ -26,26 +27,27 @@ public class TransferController {
     @PostMapping("/deposit")
     public ResponseEntity<?> deposit(@RequestHeader(value = "X-User-Id", required = false) String userId,
                                      @RequestBody DepositRequest depositRequest) {
-        LOGGER.info("❌{}", userId);
-        transferService.operation(depositRequest);
+        transferService.operation(depositRequest, userId);
         return ResponseEntity.ok("Deposit request sent successfully");
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<?> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
-        transferService.operation(withdrawRequest);
+    public ResponseEntity<?> withdraw(@RequestHeader(value = "X-User-Id", required = false) String userId,
+            @RequestBody WithdrawRequest withdrawRequest) {
+        transferService.operation(withdrawRequest, userId);
         return ResponseEntity.ok("Withdraw request sent successfully");
     }
 
     @PostMapping("/transfers")
-    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
-        UUID id = transferService.operation(transferRequest);
+    public ResponseEntity<?> transfer(@RequestHeader(value = "X-User-Id", required = false) String userId,
+            @RequestBody TransferRequest transferRequest) {
+        UUID id = transferService.operation(transferRequest, userId);
         return ResponseEntity.ok("Transfer request sent successfully with id: " + id);
     }
 
-    @GetMapping("/getStatusTran/{id}")
-    public ResponseEntity<?> requestStatus(@PathVariable UUID id){
-        TransactionStatusType responseStatus = transferRepository.findTransactionById(id).orElseThrow(
+    @PostMapping("/getStatusTran")
+    public ResponseEntity<?> requestStatus(@RequestBody UuidIdRequest request){
+        TransactionStatusType responseStatus = transferRepository.findTransactionById(request.getId()).orElseThrow(
                 () -> new TransfersServiceException("Transaction with id not found"));
         return ResponseEntity.ok(responseStatus);
     }

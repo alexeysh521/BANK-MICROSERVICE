@@ -13,26 +13,30 @@ spring:
           predicates:
             - Path=/account/**
           filters:
-            - StripPrefix=1
+            - Authentication
 
         - id: transfer-service
           uri: lb://TRANSFER-SERVICE
           predicates:
             - Path=/transfer/**
           filters:
-            - JwtAuthFilter
+            - Authentication
 
         - id: people-service
           uri: lb://PEOPLE-SERVICE
           predicates:
-            - Path=/**
+            - Path=/people/**,/users/**
+          filters:
+            - Authentication
+
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**,/admins/**,/managers/**,/users/**
           filters:
-            - StripPrefix=1
+            - Authentication
+
 
 #    globalcors:
 #      cors-configurations:
@@ -41,7 +45,6 @@ spring:
 #          allowed-methods: "*"
 #          allowed-headers: "*"
 #          allow-credentials: true
-
 
 eureka:
   client:
@@ -52,6 +55,7 @@ eureka:
 
 logging:
   level:
-    root: INFO
     kafka.system.api_gateway_forBank: DEBUG
-    org.springframework.cloud.gateway: DEBUG
+    kafka.system.api_gateway_forBank.security.JwtAuthGlobalFilter: TRACE
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web.reactive: DEBUG

@@ -3,11 +3,10 @@ package kafka.system.AuthService.service;
 
 import kafka.system.AuthService.persistence.model.UserCredential;
 import kafka.system.AuthService.persistence.repository.UserRepository;
-import kafka.system.AuthService.security.JwtProvider;
-import kafka.system.core.dto.AuthService.AdminRegisterRequest;
+import kafka.system.AuthService.security.JwtService;
 import kafka.system.core.dto.AuthService.UserCredentialDto;
+import kafka.system.core.dto.AuthService.UserLoginRequest;
 import kafka.system.core.dto.AuthService.UserRegisterRequest;
-import kafka.system.core.dto.model.LoginOrRegisterRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +20,14 @@ import java.util.Map;
 
 
 @Service
-public class UserService {
+public class UserServiceImpl {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final UserRepository userRepository;
     private final UtilService utilService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtProvider;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ModelMapper modelMapper;
 
@@ -36,7 +35,7 @@ public class UserService {
     private String userCreateTopic;
 
 
-    public UserService(UserRepository userRepository, UtilService utilService, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, UtilService utilService, PasswordEncoder passwordEncoder, JwtService jwtProvider, KafkaTemplate<String, Object> kafkaTemplate, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.utilService = utilService;
         this.passwordEncoder = passwordEncoder;
@@ -45,7 +44,7 @@ public class UserService {
         this.modelMapper = modelMapper;
     }
 
-    public Map<String, String> login(UserRegisterRequest request) {
+    public Map<String, String> login(UserLoginRequest request) {
         UserCredential user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("invalid credentials"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))

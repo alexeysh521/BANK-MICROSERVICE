@@ -5,11 +5,7 @@ import jakarta.annotation.PostConstruct;
 import kafka.system.core.enums.RolesType;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
@@ -18,7 +14,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-public class JwtProvider {
+public class JwtService {
     private RSAPrivateKey privateKey;
     private RSAPublicKey publicKey;
 
@@ -49,7 +45,7 @@ public class JwtProvider {
                 .claim("email", email)
                 .claim("role", role)
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(15, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(now.plus(10, ChronoUnit.MINUTES)))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
     }
@@ -64,10 +60,6 @@ public class JwtProvider {
                 .setExpiration(Date.from(now.plus(30, ChronoUnit.DAYS)))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
-    }
-
-    public Jws<Claims> validateToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
     }
 
     public RSAPublicKey getPublicKey() {

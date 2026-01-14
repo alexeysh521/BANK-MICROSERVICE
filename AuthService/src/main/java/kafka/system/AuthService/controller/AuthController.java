@@ -1,53 +1,55 @@
 package kafka.system.AuthService.controller;
 
 import jakarta.validation.Valid;
-import kafka.system.AuthService.service.AdminService;
-import kafka.system.AuthService.service.ManagerService;
-import kafka.system.AuthService.service.UserService;
-import kafka.system.core.dto.AuthService.AdminRegisterRequest;
-import kafka.system.core.dto.AuthService.ManagerRegisterRequest;
-import kafka.system.core.dto.AuthService.UserRegisterRequest;
-import kafka.system.core.dto.model.LoginOrRegisterRequest;
-import org.apache.kafka.common.protocol.types.Field;
+import kafka.system.AuthService.SecretKey.SecretKeyService;
+import kafka.system.AuthService.service.AdminServiceImpl;
+import kafka.system.AuthService.service.ManagerServiceImpl;
+import kafka.system.AuthService.service.UserServiceImpl;
+import kafka.system.core.dto.AuthService.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final AdminService adminService;
-    private final ManagerService managerService;
+    private final UserServiceImpl userService;
+    private final AdminServiceImpl adminService;
+    private final ManagerServiceImpl managerService;
+    private final SecretKeyService secretKeyService;
 
-    public AuthController(UserService authService, AdminService adminService, ManagerService managerService) {
+    public AuthController(UserServiceImpl authService, AdminServiceImpl adminService, ManagerServiceImpl managerService, SecretKeyService secretKeyService) {
         this.userService = authService;
         this.adminService = adminService;
         this.managerService = managerService;
+        this.secretKeyService = secretKeyService;
     }
 
     @PostMapping("/register/admin")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody AdminRegisterRequest request) {
+        if(!secretKeyService.checkSecretKey(request.getSecretKey()))
+            return ResponseEntity.badRequest().body("Invalid secret key");
         return ResponseEntity.ok(adminService.save(request));
     }
 
     @PostMapping("/login/admin")
-    public ResponseEntity<?> loginAdmin(@Valid @RequestBody AdminRegisterRequest request) {
+    public ResponseEntity<?> loginAdmin(@Valid @RequestBody AdminLoginRequest request) {
+        if(!secretKeyService.checkSecretKey(request.getSecretKey()))
+            return ResponseEntity.badRequest().body("Invalid secret key");
         return ResponseEntity.ok(adminService.login(request));
     }
 
     @PostMapping("/register/manager")
     public ResponseEntity<?> registerManager(@Valid @RequestBody ManagerRegisterRequest request) {
+        if(!secretKeyService.checkSecretKey(request.getSecretKey()))
+            return ResponseEntity.badRequest().body("Invalid secret key");
         return ResponseEntity.ok(managerService.save(request));
     }
 
     @PostMapping("/login/manager")
-    public ResponseEntity<?> loginManager(@Valid @RequestBody ManagerRegisterRequest request) {
+    public ResponseEntity<?> loginManager(@Valid @RequestBody ManagerLoginRequest request) {
+        if(!secretKeyService.checkSecretKey(request.getSecretKey()))
+            return ResponseEntity.badRequest().body("Invalid secret key");
         return ResponseEntity.ok(managerService.login(request));
     }
 
@@ -57,19 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/user")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserRegisterRequest request) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
     }
-
-    @GetMapping("/public-key")
-    public ResponseEntity<String> publicKey() throws Exception {
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream("keys/public.pem");
-
-        if (inputStream == null)
-            throw new RuntimeException("File 'keys/public.pem' not found in classpath!");
-
-        return ResponseEntity.ok(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-    }
-
 }

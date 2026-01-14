@@ -45,8 +45,9 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Transactional("transactionManager")
-    public UUID operation(Object request) {
-        Object requestWithId = savePendingTransaction(request);
+    public UUID operation(Object request, String userId) {
+        UUID userID = UUID.fromString(userId);
+        Object requestWithId = savePendingTransaction(request, userID);
         UUID tranId = ((TransactionBase) requestWithId).getTransactionId();
         String topic;
         TransactionStatusType transactionStatus;
@@ -89,9 +90,10 @@ public class TransferServiceImpl implements TransferService {
         return tranId;
     }
 
-    private Object savePendingTransaction(Object request) {
+    private Object savePendingTransaction(Object request, UUID userId) {
         return switch (request) {
             case DepositRequest requestD -> {
+                requestD.setUserId(userId);
                 Transaction transaction = new Transaction(
                         requestD.getUserId(),
                         requestD.getAccId(),
@@ -108,6 +110,7 @@ public class TransferServiceImpl implements TransferService {
                 yield requestD;
             }
             case WithdrawRequest requestW -> {
+                requestW.setUserId(userId);
                 Transaction transaction = new Transaction(
                         requestW.getUserId(),
                         requestW.getAccId(),
@@ -124,6 +127,7 @@ public class TransferServiceImpl implements TransferService {
                 yield requestW;
             }
             case TransferRequest requestT -> {
+                requestT.setUserId(userId);
                 Transaction transaction = new Transaction(
                         requestT.getUserId(),
                         requestT.getFromAccId(),
