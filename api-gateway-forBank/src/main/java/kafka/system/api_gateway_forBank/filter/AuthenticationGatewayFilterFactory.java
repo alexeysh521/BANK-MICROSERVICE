@@ -37,8 +37,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            if (path.startsWith("/auth/login/user") ||
-                    path.startsWith("/auth/register") ||
+            if (path.startsWith("/auth/login/admin") ||
+                    path.startsWith("/auth/login/manager") ||
+                    path.startsWith("/auth/login/user") ||
+                    path.startsWith("/auth/register/admin") ||
+                    path.startsWith("/auth/register/manager") ||
+                    path.startsWith("/auth/register/user") ||
                     path.equals("/auth/public-key")) {
                 return chain.filter(exchange);
             }

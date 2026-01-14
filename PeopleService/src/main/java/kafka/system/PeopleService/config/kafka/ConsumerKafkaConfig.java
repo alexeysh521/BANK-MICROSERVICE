@@ -1,22 +1,22 @@
-package kafka.system.TransferService.config;
+package kafka.system.PeopleService.config.kafka;
 
 import kafka.system.core.exception.NotRetryableException;
 import kafka.system.core.exception.RetryableException;
-import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.*;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
@@ -28,8 +28,8 @@ public class ConsumerKafkaConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private final Environment env;
 
-    public ConsumerKafkaConfig(Environment env) {
-        this.env = env;
+    public ConsumerKafkaConfig(Environment environment) {
+        this.env = environment;
     }
 
     @Bean
@@ -59,7 +59,7 @@ public class ConsumerKafkaConfig {
 
         DefaultErrorHandler handler = new DefaultErrorHandler(
                 new DeadLetterPublishingRecoverer(kafkaTemplate),
-                new FixedBackOff(3000, 5)
+                new FixedBackOff(2000, 5)
         );
 
         handler.setRetryListeners((record, ex, deliveryAttempt) -> {
@@ -74,4 +74,5 @@ public class ConsumerKafkaConfig {
 
         return containerFactory;
     }
+
 }

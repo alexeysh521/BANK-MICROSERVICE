@@ -7,7 +7,6 @@ import java.util.UUID;
 
 @Data
 public class AddUserDataDto {
-    private UUID id;
     private String firstName;
     private String overageName;
     private String lastName;

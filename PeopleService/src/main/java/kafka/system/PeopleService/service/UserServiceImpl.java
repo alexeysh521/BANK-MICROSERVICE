@@ -43,8 +43,8 @@ public class UserServiceImpl {
         return convertTo(user);
     }
 
-    public void changeData(AddUserDataDto dto){
-        User user = findUserByIdOrThrowException(dto.getId());
+    public void changeData(AddUserDataDto dto, String userId){
+        User user = findUserByIdOrThrowException(UUID.fromString(userId));
 
         user.setFirstName(dto.getFirstName());
         user.setOverageName(dto.getOverageName());
@@ -59,8 +59,8 @@ public class UserServiceImpl {
     }
 
     @Transactional("transactionManager")
-    public void addData(AddUserDataDto dto){
-        User user = findUserByIdOrThrowException(dto.getId());
+    public void addData(AddUserDataDto dto, String userId){
+        User user = findUserByIdOrThrowException(UUID.fromString(userId));
 
         user.setFirstName(dto.getFirstName());
         user.setOverageName(dto.getOverageName());

@@ -1,4 +1,4 @@
-package kafka.system.PeopleService.config;
+package kafka.system.PeopleService.config.kafka;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.kafka.clients.producer.ProducerConfig;

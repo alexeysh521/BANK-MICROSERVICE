@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/transfer")
-public class TransferController {
+public class UserTransferController {
 
     private final TransferServiceImpl transferService;
     private final TransferRepository transferRepository;
@@ -52,9 +52,4 @@ public class TransferController {
         return ResponseEntity.ok(responseStatus);
     }
 
-    //посмотреть список транзакций
-    @GetMapping("/list")
-    public ResponseEntity<?> transactionList(){
-        return ResponseEntity.ok(transferRepository.findAll());
-    }
 }
