@@ -21,24 +21,21 @@ public class AccountController {
 
     private final AccountServiceImpl accountService;
 
-    @PostMapping("/balance")
-    public ResponseEntity<AccountBalanceDto> viewBalance(@RequestBody UuidIdRequest request) {
-        return ResponseEntity.ok(accountService.viewBalance(request.getId()));
-    }
+    // посмотреть свой баланс
 
-    @PostMapping("/data")
-    public ResponseEntity<AccountMap> viewDataAboutAcc(@RequestBody UuidIdRequest request) {
-        return ResponseEntity.ok(accountService.findAllOnAcc(request.getId()));
-    }
+    // посмотреть данные аккаунта
 
+    // создать новый аккаунт
     @PostMapping("/create")
     public ResponseEntity<String> createAccount(@RequestBody CreateAcc createAcc){
         accountService.createAccount(createAcc);
         return ResponseEntity.ok("Create account success");
     }
 
+    // посмотреть список моих аккаунтов
     @PostMapping("/myAccounts")
-    public ResponseEntity<List<AccountMap>> viewMyAccounts(@RequestBody UuidIdRequest request) {
-        return ResponseEntity.ok(accountService.findAllByUserId(request.getId()));
+    public ResponseEntity<List<AccountMap>> viewMyAccounts(@RequestHeader(value = "X-User-Id", required = false)
+                                                               String userId) {
+        return ResponseEntity.ok(accountService.findAllByUserId(UUID.fromString(userId)));
     }
 }

@@ -1,7 +1,7 @@
 package kafka.system.TransferService.controller;
 
-import kafka.system.TransferService.persistence.repository.TransferRepository;
-import kafka.system.TransferService.service.TransferServiceImpl;
+import kafka.system.TransferService.persistence.repository.TransactionRepository;
+import kafka.system.TransferService.service.TransactionServiceImpl;
 import kafka.system.core.dto.AccountService.UuidIdRequest;
 import kafka.system.core.dto.TransferService.*;
 import kafka.system.core.enums.TransactionStatusType;
@@ -20,36 +20,47 @@ import java.util.UUID;
 @RequestMapping("/transfer")
 public class UserTransferController {
 
-    private final TransferServiceImpl transferService;
-    private final TransferRepository transferRepository;
+    private final TransactionServiceImpl transactionService;
+    private final TransactionRepository transactionRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    // пополнить счет
     @PostMapping("/deposit")
     public ResponseEntity<?> deposit(@RequestHeader(value = "X-User-Id", required = false) String userId,
                                      @RequestBody DepositRequest depositRequest) {
-        transferService.operation(depositRequest, userId);
+        transactionService.operation(depositRequest, userId);
         return ResponseEntity.ok("Deposit request sent successfully");
     }
 
+    // снять деньги
     @PostMapping("/withdraw")
     public ResponseEntity<?> withdraw(@RequestHeader(value = "X-User-Id", required = false) String userId,
             @RequestBody WithdrawRequest withdrawRequest) {
-        transferService.operation(withdrawRequest, userId);
+        transactionService.operation(withdrawRequest, userId);
         return ResponseEntity.ok("Withdraw request sent successfully");
     }
 
+    // перевести деньги
     @PostMapping("/transfers")
     public ResponseEntity<?> transfer(@RequestHeader(value = "X-User-Id", required = false) String userId,
             @RequestBody TransferRequest transferRequest) {
-        UUID id = transferService.operation(transferRequest, userId);
+        UUID id = transactionService.operation(transferRequest, userId);
         return ResponseEntity.ok("Transfer request sent successfully with id: " + id);
     }
 
+    // посмотреть статус транзакции по id
     @PostMapping("/getStatusTran")
     public ResponseEntity<?> requestStatus(@RequestBody UuidIdRequest request){
-        TransactionStatusType responseStatus = transferRepository.findTransactionById(request.getId()).orElseThrow(
+        TransactionStatusType responseStatus = transactionRepository.findTransactionById(request.getId()).orElseThrow(
                 () -> new TransfersServiceException("Transaction with id not found"));
         return ResponseEntity.ok(responseStatus);
+    }
+
+
+    // посмотреть список своих транзакций (проверить безопасность)
+    @GetMapping("/viewTransactionsByUserId/{userId}")
+    public ResponseEntity<?> viewTransactionByUserId(@PathVariable UUID userId) {
+        return ResponseEntity.ok(transactionService.viewTransactionsByUserId(userId));
     }
 
 }

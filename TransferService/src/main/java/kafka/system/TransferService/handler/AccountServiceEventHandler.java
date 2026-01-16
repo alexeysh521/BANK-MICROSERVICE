@@ -2,7 +2,7 @@ package kafka.system.TransferService.handler;
 
 
 import kafka.system.TransferService.persistence.model.Transaction;
-import kafka.system.TransferService.persistence.repository.TransferRepository;
+import kafka.system.TransferService.persistence.repository.TransactionRepository;
 import kafka.system.core.dto.AccountService.TranConfirmed;
 import kafka.system.core.dto.AccountService.TranFailure;
 import kafka.system.core.enums.TransactionStatusType;
@@ -20,9 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountServiceEventHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private final TransferRepository transferRepository;
+    private final TransactionRepository transferRepository;
 
-    public AccountServiceEventHandler(TransferRepository transferRepository) {
+    public AccountServiceEventHandler(TransactionRepository transferRepository) {
         this.transferRepository = transferRepository;
     }
 

@@ -1,6 +1,6 @@
 package kafka.system.PeopleService.config.security;
 
-import kafka.system.TransferService.config.security.GatewayHeaderAuthFilter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

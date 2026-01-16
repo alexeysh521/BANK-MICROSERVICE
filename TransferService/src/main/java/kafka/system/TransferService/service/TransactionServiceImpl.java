@@ -1,14 +1,17 @@
 package kafka.system.TransferService.service;
 
+
 import kafka.system.TransferService.persistence.model.Transaction;
-import kafka.system.TransferService.persistence.repository.TransferRepository;
-import kafka.system.TransferService.service.impl.TransferService;
+import kafka.system.TransferService.persistence.repository.TransactionRepository;
+import kafka.system.TransferService.service.impl.TransactionService;
 import kafka.system.core.dto.TransferService.*;
+import kafka.system.core.enums.TransactionPeriod;
 import kafka.system.core.enums.TransactionStatusType;
 import kafka.system.core.enums.TransactionType;
 import kafka.system.core.exception.TransfersServiceException;
 import kafka.system.core.interfaces.TransactionBase;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,18 +19,22 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
 @Service
 @RequiredArgsConstructor
-public class TransferServiceImpl implements TransferService {
+public class TransactionServiceImpl implements TransactionService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final TransferRepository transferRepository;
+    private final TransactionRepository transactionRepository;
+    private final ModelMapper modelMapper;
 
     @Value("${withdraw-events-topic}")
     private String withdraw;
@@ -38,8 +45,76 @@ public class TransferServiceImpl implements TransferService {
     @Value("${transfer-events-topic}")
     private String transfer;
 
+    public List<TransactionConvert> getTransactionByTransactionStatus(TransactionStatusType type){
+        return transactionRepository.findTransactionByTransactionStatus(type)
+                .stream()
+                .map(this::convertTransactionTo).toList();
+    }
+
+    public List<TransactionConvert> getTransactionByOperationStatus(TransactionType type){
+        return transactionRepository.findTransactionByTransactionType(type)
+                .stream()
+                .map(this::convertTransactionTo).toList();
+    }
+
+    public List<Transaction> getTransactionOverTime(TransactionPeriod period){
+        return null;
+    }
+
+    public BigDecimal getAmountUser(UUID userId) {
+        List<Transaction> transactions = transactionRepository.findTransactionByUserId(userId);
+        BigDecimal amount = BigDecimal.ZERO;
+        if(transactions == null)
+            return amount;
+        for(Transaction transaction : transactions)
+            amount = amount.add(transaction.getAmount());
+        return amount;
+    }
+
+    private TransactionConvert convertTransactionTo(Transaction transaction) {
+        return modelMapper.map(transaction, TransactionConvert.class);
+    }
+
+    public List<TransactionConvert> getTransactionFromNewToOld(){
+        return transactionRepository.findAllByOrderByTimestampDesc()
+                .stream()
+                .map(this::convertTransactionTo)
+                .toList();
+    }
+
+    public List<TransactionConvert> getTransactionFromOldToNew(){
+        return transactionRepository.findAllByOrderByTimestampAsc()
+                .stream()
+                .map(this::convertTransactionTo)
+                .toList();
+    }
+
+    public List<TransactionConvert> viewTransactionsByAccountId(UUID accountId) {
+        List<Transaction> transactions = transactionRepository.findTransactionByFromAccId(accountId);
+        if(transactions != null)
+            return transactions.stream().map(this::convertTransactionTo).toList();
+        return null;
+    }
+
+    public List<TransactionConvert> getTransactionList(){
+        return transactionRepository.findAll().stream().map(this::convertTransactionTo).toList();
+    }
+
+    public TransactionConvert viewTransactionByTranId(UUID tranId) {
+        return modelMapper.map(transactionRepository.findById(tranId)
+                        .orElse(null),
+                TransactionConvert.class);
+    }
+
+    public List<TransactionConvert> viewTransactionsByUserId(UUID userId) {
+        List<Transaction> transactions = transactionRepository.findTransactionByUserId(userId);
+        if(transactions != null)
+            return transactions.stream().map(this::convertTransactionTo).toList();
+        return null;
+    }
+
     public void updateTransactionStatus(UUID id, TransactionStatusType status){
-        Transaction tran = transferRepository.findById(id)
+        Transaction tran = transactionRepository.findById(id)
                 .orElseThrow(() -> new TransfersServiceException("Transaction entity not found"));
         tran.setTransactionStatus(status);
     }
@@ -76,7 +151,7 @@ public class TransferServiceImpl implements TransferService {
                 }
             });
 
-            transactionStatus = transferRepository.findTransactionById(tranId).orElse(null);
+            transactionStatus = transactionRepository.findTransactionById(tranId).orElse(null);
 
             if(transactionStatus == TransactionStatusType.PENDING)
                 updateTransactionStatus(tranId, TransactionStatusType.FAILED);
@@ -104,7 +179,7 @@ public class TransferServiceImpl implements TransferService {
                         TransactionStatusType.PENDING,
                         LocalDateTime.now()
                 );
-                transferRepository.save(transaction);
+                transactionRepository.save(transaction);
                 requestD.setTransactionId(transaction.getTransferId());
 
                 yield requestD;
@@ -121,7 +196,7 @@ public class TransferServiceImpl implements TransferService {
                         TransactionStatusType.PENDING,
                         LocalDateTime.now()
                 );
-                transferRepository.save(transaction);
+                transactionRepository.save(transaction);
                 requestW.setTransactionId(transaction.getTransferId());
 
                 yield requestW;
@@ -138,7 +213,7 @@ public class TransferServiceImpl implements TransferService {
                         TransactionStatusType.PENDING,
                         LocalDateTime.now()
                 );
-                transferRepository.save(transaction);
+                transactionRepository.save(transaction);
                 requestT.setTransactionId(transaction.getTransferId());
 
                 yield requestT;

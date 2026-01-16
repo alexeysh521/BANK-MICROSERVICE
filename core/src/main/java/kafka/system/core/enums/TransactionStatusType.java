@@ -15,4 +15,5 @@ public enum TransactionStatusType {
             throw new IllegalArgumentException("Invalid transaction status status");
         }
     }
+
 }
